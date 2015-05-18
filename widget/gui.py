@@ -10,19 +10,22 @@ class Application(tk.Frame):
         self.grid()
         self.createWidgets()
 
-
-    def createLabel(self):
-        self.label = tk.Label(master=self)
-
     def createWidgets(self):
-        self.hi_there = tk.Button(self)
-        self.hi_there["text"] = "Hello World\n(click me)"
-        self.hi_there["command"] = self.say_hi
-        self.hi_there.pack(side="top")
+        self.frame = tk.Frame(self)
+        self.frame.grid()
+        self.label = tk.Label(self.frame, text="BaseAddr:")
+        self.label.pack(side=tk.LEFT)
 
-        self.QUIT = tk.Button(self, text="QUIT", fg="red",
-                                            command=self.destroy)
-        self.QUIT.pack(side="bottom")
+        self.Entry = tk.Entry(self.frame)
+        self.Entry.pack(side=tk.RIGHT)
+
+        #self.hi_there = tk.Button(self)
+        #self.hi_there["text"] = "Hello World\n(click me)"
+        #self.hi_there["command"] = self.say_hi
+        #self.hi_there.pack(side="top")
+
+        #self.QUIT = tk.Button(self, text="QUIT", fg="red", command=self.destroy)
+        #self.QUIT.pack(side="bottom")
 
     def say_hi(self):
         print("hi there, everyone!")
