@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-# -*- coding: utf-8 -*-
+# -*- coding: UTF-8 -*-
+
 
 import Tkinter as tk
 
@@ -13,56 +14,104 @@ class TextViewer(tk.Frame):
     def createwidgets(self):
         text = tk.Text(self)
         text.pack(expand=tk.YES, fill=tk.BOTH)
+        self.text = text
+
+    def appendText(self,text=''):
+        self.text.insert(tk.END, text)
 
 class TextInput(tk.Frame):
     def __init__(self, parent=None):
         tk.Frame.__init__(self, parent)
         #self.pack(expand=tk.YES, fill=tk.Y)
-        self.createwidgets()
+        self.createWidgets()
 
-    def createlabelentry(self, text):
-        iframe = tk.Frame(self)
-        ilabel = tk.Label(iframe, text=text)
-        ientry = tk.Entry(iframe)
-        ilabel.pack(side=tk.LEFT, fill=tk.Y)
-        ientry.pack(side=tk.RIGHT, fill=tk.Y)
-        return iframe
+    def createWidgets(self):
+        bframe = tk.Frame(self)
+        sframe = tk.Frame(self)
 
-    def createwidgets(self):
-        wframe = tk.Frame(self)
-        base_entry = self.createlabelentry(text='BaseAddr :')
-        stack_entry = self.createlabelentry(text='StackAddr:')
-        base_entry.pack(side=tk.TOP, fill=tk.NONE, padx=10, pady=10)
-        stack_entry.pack(side=tk.BOTTOM, fill=tk.NONE, padx=10, pady=5)
-        wframe.pack(side=tk.RIGHT, fill=tk.Y)
-        
+        blabel = tk.Label(bframe, text='BaseAddr :')
+        bentry = tk.Entry(bframe)
+        blabel.pack(side=tk.LEFT)
+        bentry.pack(side=tk.RIGHT)
+
+        slabel = tk.Label(sframe, text='StackAddr:')
+        sentry = tk.Entry(sframe)
+        slabel.pack(side=tk.LEFT)
+        sentry.pack(side=tk.RIGHT)
+
+        bframe.pack(side=tk.TOP, padx=10, pady=10)
+        sframe.pack(side=tk.BOTTOM, padx=10, pady=10)
+
+        self.bentry = bentry
+        self.sentry = sentry
+
+    def getBaseAddr(self):
+        return self.bentry.get()
+
+    def getStackAddr(self):
+        return self.sentry.get()
+
+    def getAddrOffset(self):
+        baseAddr = self.getBaseAddr()
+        stackAddr = self.getStackAddr()
+        offsetAddr = hex( int(stackAddr,16)-int(baseAddr,16) )
+        return offsetAddr
+
 class FileInput(tk.Frame):
     def __init__(self, parent=None):
         tk.Frame.__init__(self, parent)
         #self.pack(expand=tk.YES, fill=tk.BOTH)
-        self.createwidgets()
+        self.createWidgets()
 
-    def createwidgets(self):
-        path_entry = tk.Entry(self)
-        upload_button = tk.Button(self, text='...')
-        path_entry.pack(side=tk.LEFT, padx=10)
-        upload_button.pack(side=tk.RIGHT, ipadx=10)
-    
-    
+    def createWidgets(self):
+        pentry = tk.Entry(self)
+        upbutton = tk.Button(self, text='unsupport', command=self.sorry)
+        pentry.pack(side=tk.LEFT, padx=10)
+        upbutton.pack(side=tk.RIGHT, ipadx=10)
+
+        self.pentry = pentry
+        self.upbutton = upbutton
+
+    def sorry(self):
+        print 'Oh,Sorry,\nNow Unsupport Load File Dialog...'
+
+    def getFilePath(self):
+        filePath = self.pentry.get()
+        return filePath
+
+
 class InputViewer(tk.Frame):
     def __init__(self, parent=None):
         tk.Frame.__init__(self, parent)
-        #self.pack(expand=tk.YES, fill=tk.BOTH)
-        self.createwidgets()
+        #self.pack(expand=tk.YES, fill=tk.BOTFH)
+        self.createWidgets()
 
-    def createwidgets(self):
+    def createWidgets(self):
         textinput = TextInput(self)
         fileinput = FileInput(self)
-        dstackbutton = tk.Button(self, text='dstack')
+        dstackbutton = tk.Button(self, text='dstack', command=self.commit)
 
         textinput.pack(anchor='w')
         fileinput.pack(anchor='w', pady=10)
         dstackbutton.pack(ipadx=10, pady=20)
+
+        self.textinput = textinput
+        self.fileinput = fileinput
+        self.dstackbutton = dstackbutton
+
+    def commit(self):
+        # 1. sftp file
+        # 2. dissassemble
+        # 3. get text
+        pass
+
+    def getAddrOffset(self):
+        return self.textinput.getAddrOffset()
+
+    def getFilePath(self):
+        return self.fileinput.getFilePath()
+
+
 
 class SimpleApp(tk.Frame):
     def __init__(self, parent=None):
@@ -76,10 +125,18 @@ class SimpleApp(tk.Frame):
 
         inputviewer.pack(side=tk.LEFT, fill=tk.Y)
         textviewer.pack(expand=tk.YES, fill=tk.BOTH)
-        
 
-    def say_hi(self):
-        print("hi there, everyone!")
+        self.inputviewer = inputviewer
+        self.textviewer = textviewer
+
+        self.inputviewer.dstackbutton['command'] = self.runApp
+
+    def runApp(self):
+        offsetAddr = self.inputviewer.getAddrOffset()
+        filePath = self.inputviewer.getFilePath()
+
+        self.textviewer.appendText(offsetAddr+'\n')
+        self.textviewer.appendText(filePath)
 
 
 def setApp2Center(rt):
