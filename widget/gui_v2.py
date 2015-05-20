@@ -7,7 +7,7 @@ import Tkinter as tk
 class TextViewer(tk.Frame):
     def __init__(self, parent=None, text='', file=None):
         tk.Frame.__init__(self, parent)
-        self.pack(expand=tk.YES, fill=tk.BOTH)
+        #self.pack(expand=tk.YES, fill=tk.BOTH)
         self.createwidgets()
 
     def createwidgets(self):
@@ -17,29 +17,52 @@ class TextViewer(tk.Frame):
 class TextInput(tk.Frame):
     def __init__(self, parent=None):
         tk.Frame.__init__(self, parent)
-        self.pack(side=tk.TOP, fill=tk.X)
+        #self.pack(expand=tk.YES, fill=tk.Y)
         self.createwidgets()
 
     def createlabelentry(self, text):
         iframe = tk.Frame(self)
         ilabel = tk.Label(iframe, text=text)
         ientry = tk.Entry(iframe)
-        ilabel.pack(side=tk.LEFT, fill=tk.BOTH)
-        ientry.pack(side=tk.RIGHT, fill=tk.BOTH)
+        ilabel.pack(side=tk.LEFT, fill=tk.Y)
+        ientry.pack(side=tk.RIGHT, fill=tk.Y)
         return iframe
 
     def createwidgets(self):
         wframe = tk.Frame(self)
         base_entry = self.createlabelentry(text='BaseAddr :')
         stack_entry = self.createlabelentry(text='StackAddr:')
-        base_entry.pack(side=tk.TOP, fill=tk.BOTH)
-        stack_entry.pack(side=tk.BOTTOM, fill=tk.BOTH)
+        base_entry.pack(side=tk.TOP, fill=tk.NONE, padx=10, pady=10)
+        stack_entry.pack(side=tk.BOTTOM, fill=tk.NONE, padx=10, pady=5)
+        wframe.pack(side=tk.RIGHT, fill=tk.Y)
         
 class FileInput(tk.Frame):
-    pass
+    def __init__(self, parent=None):
+        tk.Frame.__init__(self, parent)
+        #self.pack(expand=tk.YES, fill=tk.BOTH)
+        self.createwidgets()
+
+    def createwidgets(self):
+        path_entry = tk.Entry(self)
+        upload_button = tk.Button(self, text='...')
+        path_entry.pack(side=tk.LEFT, padx=10)
+        upload_button.pack(side=tk.RIGHT, ipadx=10)
     
     
-class 
+class InputViewer(tk.Frame):
+    def __init__(self, parent=None):
+        tk.Frame.__init__(self, parent)
+        #self.pack(expand=tk.YES, fill=tk.BOTH)
+        self.createwidgets()
+
+    def createwidgets(self):
+        textinput = TextInput(self)
+        fileinput = FileInput(self)
+        dstackbutton = tk.Button(self, text='dstack')
+
+        textinput.pack(anchor='w')
+        fileinput.pack(anchor='w', pady=10)
+        dstackbutton.pack(ipadx=10, pady=20)
 
 class SimpleApp(tk.Frame):
     def __init__(self, parent=None):
@@ -48,11 +71,12 @@ class SimpleApp(tk.Frame):
         self.createApp()
 
     def createApp(self):
+        inputviewer = InputViewer(self)
         textviewer = TextViewer(self)
-        textinput = TextInput(self)
 
-        textviewer.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.BOTH)
-        textinput.pack(side=tk.LEFT, expand=tk.YES, fill=tk.BOTH)
+        inputviewer.pack(side=tk.LEFT, fill=tk.Y)
+        textviewer.pack(expand=tk.YES, fill=tk.BOTH)
+        
 
     def say_hi(self):
         print("hi there, everyone!")
